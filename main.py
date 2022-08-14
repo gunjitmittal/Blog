@@ -170,7 +170,7 @@ def about():
 @app.route("/contact", methods=['POST', "GET"])
 def contact():
     if request.method == "GET":
-        return render_template("contact.html")
+        return render_template("contact.html", submitted=False)
     elif request.method == "POST":
         connection = smtplib.SMTP("smtp.gmail.com", 587)
         connection.starttls()
@@ -179,7 +179,7 @@ def contact():
                             msg=f"Subject: Blog-contact-form\n\n Name: {request.form['name']} \n Email:"
                                 f" {request.form['email']} \n Phone: {request.form['phone']} \n Message: {request.form['message']} ")
         connection.close()
-        return render_template("submitted.html")
+        return render_template("contact.html", submitted=True)
 
 
 @admin_only
