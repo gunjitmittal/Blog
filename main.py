@@ -167,7 +167,7 @@ def about():
     return render_template("about.html")
 
 
-@app.route("/contact", method=['POST', "GET"])
+@app.route("/contact", methodss=['POST', "GET"])
 def contact():
     if request.method == "GET":
         return render_template("contact.html")
