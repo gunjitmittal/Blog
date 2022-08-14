@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash, abort
+from flask import Flask, render_template, redirect, url_for, flash, abort, request
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
 from datetime import date
@@ -9,9 +9,12 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, cur
 from forms import CreatePostForm, RegistrationForm, LoginForm, CommentForm
 from flask_gravatar import Gravatar
 import dotenv
+import smtplib
 import os
 
 files = dotenv.load_dotenv(".env")
+my_email = os.getenv("MY_EMAIL")
+password = os.getenv("PASSWORD")
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
@@ -163,9 +166,19 @@ def about():
     return render_template("about.html")
 
 
-@app.route("/contact")
+@app.route("/contact", method=['POST', "GET"])
 def contact():
-    return render_template("contact.html")
+    if request.method == "GET":
+        return render_template("contact.html")
+    elif request.method == "POST":
+        connection = smtplib.SMTP("smtp.gmail.com", 587)
+        connection.starttls()
+        connection.login(user=my_email, password=password)
+        connection.sendmail(from_addr=my_email, to_addrs="gunjitmittal2@gmail.com",
+                            msg=f"Subject: Blog-contact-form\n\n Name: {request.form['name']} \n Email:"
+                                f" {request.form['email']} \n Phone: {request.form['phone']} \n Message: {request.form['message']} ")
+        connection.close()
+        return render_template("submitted.html")
 
 
 @admin_only
